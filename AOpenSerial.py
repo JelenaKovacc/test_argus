@@ -3,7 +3,7 @@ import time
 import serial
 import serial.tools.list_ports
 import argparse
-import logging
+#import logging
 
 class SerialportHandler(threading.Thread):
 
@@ -22,7 +22,7 @@ class SerialportHandler(threading.Thread):
             # initialize thread
             super(SerialportHandler, self).__init__()
             self.name                 = 'SerialportHandler@{0}'.format(self.serialport)
-            self.logger = logging.getLogger(self.name)
+            #self.logger = logging.getLogger(self.name)
             self.start()
 
     def run(self):
