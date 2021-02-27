@@ -1,9 +1,17 @@
+import argparse
 import threading
 import time
 import serial
-import serial.tools.list_ports
-import argparse
-#import logging
+import logging
+
+# ============================ defines =========================================
+logger = logging.getLogger()
+handler = logging.StreamHandler()
+formatter = logging.Formatter(
+        '%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+#============================ classes =========================================
 
 class SerialportHandler(threading.Thread):
 
@@ -12,6 +20,10 @@ class SerialportHandler(threading.Thread):
             # store params
             self.serialport           = serialport
             self.baudrate             = baudrate
+
+            # logging setup
+            self.logger = logging.getLogger('SeialportHandler')
+            self.logger.info("Trying to connect to serial port:" + self.serialport)
 
             # local variables
             self.serialHandler        = None
@@ -22,7 +34,6 @@ class SerialportHandler(threading.Thread):
             # initialize thread
             super(SerialportHandler, self).__init__()
             self.name                 = 'SerialportHandler@{0}'.format(self.serialport)
-            #self.logger = logging.getLogger(self.name)
             self.start()
 
     def run(self):
@@ -46,8 +57,9 @@ class SerialportHandler(threading.Thread):
             except:
                 # mote disconnected, or pyserialHandler closed
                 # destroy pyserial instance
+                self.logger.warning("Could not open port:" + ' ' + self.serialport)
                 self.serialHandler = None
-
+                self.goOn          = False
             # wait
             time.sleep(1)
     #======================== public ==========================================
@@ -73,10 +85,11 @@ class SerialportHandler(threading.Thread):
 if __name__ == '__main__':
 
     # parse args
-    parser = argparse.ArgumentParser(description='Input the serial port') #creating an ArgumentParser object
-    parser.add_argument("--serialport", nargs="?", default="COM3")
+    parser = argparse.ArgumentParser() #creating an ArgumentParser object
+    parser.add_argument("serialport", help= 'Input the serial port')
     args = parser.parse_args()
 
-
     openserial = SerialportHandler(serialport=args.serialport)
+
+    logger.info('Started listening on serial port:', args.serialport)
     openserial.connectSerialPort() #connect to serial port
