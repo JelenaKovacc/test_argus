@@ -23,7 +23,7 @@ class SerialportHandler(threading.Thread):
 
             # logging setup
             self.logger = logging.getLogger('SeialportHandler')
-            self.logger.info("Trying to connect to serial port:" + self.serialport)
+            #self.logger.info("Trying to connect to serial port:" + self.serialport)
 
             # local variables
             self.serialHandler        = None
@@ -91,5 +91,5 @@ if __name__ == '__main__':
 
     openserial = SerialportHandler(serialport=args.serialport)
 
-    logger.info('Started listening on serial port:', args.serialport)
+    logger.warning('Try to listen on serial port:' +  args.serialport)
     openserial.connectSerialPort() #connect to serial port
