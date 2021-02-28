@@ -54,10 +54,14 @@ class SerialportHandler(threading.Thread):
                             print(c)
                             time.sleep(0.2)
 
-            except:
+            except serial.SerialException:
                 # mote disconnected, or pyserialHandler closed
                 # destroy pyserial instance
-                self.logger.warning("Could not open port:" + ' ' + self.serialport)
+                self.logger.warning("Could not open port:" + ' ' + self.serialport + '. No connection to the device could be established.')
+                self.serialHandler = None
+                self.goOn          = False
+            except:
+                self.logger.warning("Could not open port:" + ' ' + self.serialport, exc_info=True)
                 self.serialHandler = None
                 self.goOn          = False
             # wait
@@ -91,5 +95,5 @@ if __name__ == '__main__':
 
     openserial = SerialportHandler(serialport=args.serialport)
 
-    logger.warning('Try to listen on serial port:' +  args.serialport)
+    logger.info('Try to listen on serial port:' +  args.serialport)
     openserial.connectSerialPort() #connect to serial port
